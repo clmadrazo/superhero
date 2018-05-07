@@ -1,0 +1,34 @@
+services:
+    fileuploader.service:
+        class: SuperHero\Bundle\AppBundle\Service\FileUploader
+        arguments:
+            $targetDirectory: '../../../../../../public/uploads/superhero'
+
+    image.superhero.listener:
+        class: SuperHero\Bundle\AppBundle\EventListener\ImageSuperheroListener
+        arguments:
+            - "@fileuploader.service"
+        tags:
+            - { name: doctrine.event_listener, event: postPersist, lazy: true  }
+            - { name: doctrine.event_listener, event: postUpdate, lazy: true  }
+            - { name: doctrine.event_listener, event: preRemove, lazy: true  }
+            - { name: doctrine.event_listener, event: postRemove, lazy: true  }
+            - { name: doctrine.event_listener, event: postLoad, lazy: true  }
+
+    # Admin
+    sonata.superhero:
+        class: SuperHero\Bundle\AppBundle\Admin\SuperheroAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Superheros, label: Superhero}
+        arguments:
+            - null
+            - SuperHero\Bundle\AppBundle\Entity\Superhero
+            - AppBundle:Admin
+    sonata.image.superhero:
+        class: SuperHero\Bundle\AppBundle\Admin\ImageSuperheroAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, show_in_dashboard: false}
+        arguments:
+            - null
+            - SuperHero\Bundle\AppBundle\Entity\ImageSuperhero
+            - AppBundle:Admin

@@ -1,0 +1,20 @@
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                server_version: 5.7
+                driver:   pdo_mysql
+                host:     127.0.0.1
+                port:     8889
+                dbname:   superhero
+                user:     root
+                password: root
+                charset:  UTF8
+
+    orm:
+        auto_generate_proxy_classes: true
+        entity_managers:
+            default:
+                connection: default
+                auto_mapping: true

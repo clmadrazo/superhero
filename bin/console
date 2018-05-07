@@ -1,7 +1,6 @@
 #!/usr/bin/env php
 <?php
 
-use App\Kernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
@@ -10,6 +9,7 @@ use Symfony\Component\Dotenv\Dotenv;
 set_time_limit(0);
 
 require __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/Kernel.php';
 
 if (!class_exists(Application::class)) {
     throw new \RuntimeException('You need to add "symfony/framework-bundle" as a Composer dependency.');

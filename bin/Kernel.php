@@ -1,7 +1,5 @@
 <?php
 
-namespace App;
-
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -27,17 +25,23 @@ class Kernel extends BaseKernel
 
     public function registerBundles()
     {
-        $contents = require $this->getProjectDir().'/config/bundles.php';
-        foreach ($contents as $class => $envs) {
-            if (isset($envs['all']) || isset($envs[$this->environment])) {
-                yield new $class();
+        $bundles = array();
+
+        $contents = require dirname(__DIR__).'/config/bundles.php';
+        foreach ((array) $contents as $class => $envs) {
+            if (isset($envs['all']) || isset($envs[$this->getEnvironment()])) {
+                $bundles[] = new $class();
             }
         }
+
+        // Our Bundles
+        $bundles[] = new SuperHero\Bundle\AppBundle\AppBundle();
+
+        return $bundles;
     }
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader)
     {
-        $container->addResource(new FileResource($this->getProjectDir().'/config/bundles.php'));
         // Feel free to remove the "container.autowiring.strict_mode" parameter
         // if you are using symfony/dependency-injection 4.0+ as it's the default behavior
         $container->setParameter('container.autowiring.strict_mode', true);
