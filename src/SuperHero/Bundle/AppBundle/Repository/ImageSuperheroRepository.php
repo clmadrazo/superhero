@@ -1,7 +1,7 @@
 <?php
 
 namespace SuperHero\Bundle\AppBundle\Repository;
-use SuperHero\Bundle\AppBundle\Entity\ImageSuperhero;
+use SuperHero\Bundle\AppBundle\Entity\Image;
 
 /**
  * ImageSuperheroRepository
@@ -11,9 +11,9 @@ use SuperHero\Bundle\AppBundle\Entity\ImageSuperhero;
  */
 class ImageSuperheroRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function save(ImageSuperhero $imageSuperhero)
+    public function save(Image $image)
     {
-        $this->_em->persist($imageSuperhero);
+        $this->_em->persist($image);
         $this->_em->flush();
     }
 }

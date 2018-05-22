@@ -1,0 +1,8 @@
+parameters:
+    url.complete: 'http://127.0.0.1:8080'
+    database_driver: pdo_mysql
+    database_host: 127.0.0.1
+    database_port: 8889
+    database_name: superhero
+    database_user: root
+    database_password: root

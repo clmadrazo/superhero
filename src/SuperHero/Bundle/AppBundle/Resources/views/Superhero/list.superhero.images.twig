@@ -1,0 +1,9 @@
+{% if label is defined %}<th><b>{{ label }}: </b></th>{% endif %}
+<td>
+    {% set images = object is defined ? object.getId : id | imagesCount %}
+    {% if images != 0 %}
+        <a href="{{ url_complete }}/admin/superhero/app/image/list?filter[superhero__id][type]=&filter[superhero__id][value]={{ object is defined ? object.getId : id }}&filter[_page]=1&filter[_sort_by]=id&filter[_sort_order]=DESC&filter[_per_page]=25" >{{ images }}</a>
+    {% else %}
+        0
+    {% endif %}    
+</td>

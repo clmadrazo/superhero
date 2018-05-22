@@ -11,11 +11,19 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class SuperheroAdmin extends AbstractAdmin
 {
+    private $twig;
+
     protected $datagridValues = array(
         '_page' => 1,
         '_sort_order' => 'DESC',
         '_sort_by' => 'id'
     );
+
+    public function __construct($code, $class, $baseControllerName, $twig)
+    {
+        parent::__construct($code, $class, $baseControllerName);
+        $this->twig = $twig;
+    }
 
     protected function configureShowFields(ShowMapper $showMapper)
     {
@@ -26,27 +34,36 @@ class SuperheroAdmin extends AbstractAdmin
             ->add('originDescription')
             ->add('superpowers')
             ->add('catchPhrase')
-            ->add('images')
+            ->add('images',  'string', array('template' => $this->twig->render('AppBundle:Superhero:list.superhero.images.twig', array('label' => 'Images Superhero', 'id' => $subject->getId()))))
         ;
     }
 
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('nickname', TextType::class, array("required" => "true"))
-            ->add('realName', TextType::class, array("required" => "true"))
-            ->add('originDescription', TextareaType::class, array("label" => "Original Description", "required" => "true"))
-            ->add('superpowers', TextareaType::class, array("required" => "true"))
-            ->add('catchPhrase', TextareaType::class, array("label" => "Catch Phrase", "required" => "true"))
-            ->add('images', 'sonata_type_collection', array(
-                'required' => false,
-                'label' => 'Images',
-                'by_reference' => true
-                ), array(
-                    'edit' => 'inline',
-                    'inline' => 'table'
-                )
-            )
+            ->tab('Superhero')
+                ->with('Superhero')
+                    ->add('nickname', TextType::class, array("required" => "true"))
+                    ->add('realName', TextType::class, array("required" => "true"))
+                    ->add('originDescription', TextareaType::class, array("label" => "Original Description", "required" => "true"))
+                    ->add('superpowers', TextareaType::class, array("required" => "true"))
+                    ->add('catchPhrase', TextareaType::class, array("label" => "Catch Phrase", "required" => "true"))
+                ->end()
+            ->end()
+            ->tab('Images Superhero')
+                ->with('Images')
+                    ->add('images', 'sonata_type_collection', array(
+                        'required' => false,
+                        'by_reference' => true,
+                        'label' => 'Images Superhero',
+                        'constraints' => new \Symfony\Component\Validator\Constraints\Valid(),
+                    ), array(
+                        'edit' => 'inline',
+                        'inline' => 'standard',
+                        'sortable' => 'position',
+                    ))
+                ->end()
+            ->end()
         ;
     }
 
@@ -54,7 +71,7 @@ class SuperheroAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('nickname')
-            ->add('images')
+            ->add('images', null, array('template' => 'AppBundle:Superhero:list.superhero.images.twig'))
             ->add('_action', 'actions', array(
                 'actions' => array(
                     'edit' => array()
@@ -70,9 +87,16 @@ class SuperheroAdmin extends AbstractAdmin
 
     public function preUpdate($superhero)
     {
-        $images = $superhero->getImages();
-        foreach ($images as $image) {
-            $image->setSuperhero($superhero);
+        $superhero->setImages($superhero->getImages());
+    }
+
+    public function getTemplate($name)
+    {
+        switch ($name) {
+            case 'edit':
+                return 'AppBundle:App:edit.html.twig';
+            default:
+                return parent::getTemplate($name);
         }
     }
 }

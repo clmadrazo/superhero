@@ -13,6 +13,7 @@
         "symfony/flex": "^1.0",
         "symfony/framework-bundle": "^3.4",
         "symfony/lts": "^3",
+        "symfony/web-profiler-bundle": "^3.4",
         "symfony/yaml": "^3.4",
         "twig/twig": "^1.26"
     },

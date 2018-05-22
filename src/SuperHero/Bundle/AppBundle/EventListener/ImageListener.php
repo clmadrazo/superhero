@@ -2,13 +2,13 @@
 
 namespace SuperHero\Bundle\AppBundle\EventListener;
 
-use SuperHero\Bundle\AppBundle\Entity\ImageSuperhero;
+use SuperHero\Bundle\AppBundle\Entity\Image;
 use SuperHero\Bundle\AppBundle\Service\FileUploader;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
-class ImageSuperheroListener
+class ImageListener
 {
     private $uploader;
 
@@ -17,10 +17,8 @@ class ImageSuperheroListener
         $this->uploader = $uploader;
     }
 
-    public function prePersist(LifecycleEventArgs $args)
+    public function prePersist($entity)
     {
-        $entity = $args->getEntity();
-
         $this->uploadFile($entity);
     }
 
@@ -28,12 +26,12 @@ class ImageSuperheroListener
     {
         $entity = $args->getEntity();
 
-        $this->uploadFile($entity);
+        $this->prePersist($entity);
     }
 
     private function uploadFile($entity)
     {
-        if (!$entity instanceof ImageSuperhero) {
+        if (!$entity instanceof Image) {
             return;
         }
 
@@ -42,7 +40,7 @@ class ImageSuperheroListener
         // only upload new files
         if ($file instanceof UploadedFile) {
             $fileName = $this->uploader->upload($file);
-            $entity->setFile($fileName);
+            $entity->setImage($fileName);
         }
     }
 
@@ -50,12 +48,12 @@ class ImageSuperheroListener
     {
         $entity = $args->getEntity();
 
-        if (!$entity instanceof ImageSuperhero) {
+        if (!$entity instanceof Image) {
             return;
         }
 
-        if ($fileName = $entity->getPath()) {
-            $entity->setFile(new File($this->uploader->getTargetDirectory().'/'.$fileName));
+        if ($fileName = $entity->getImagePath()) {
+            $entity->setImage(new File($this->uploader->getTargetDirectory().'/'.$fileName));
         }
     }
 }

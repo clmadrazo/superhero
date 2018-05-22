@@ -5,7 +5,6 @@ namespace SuperHero\Bundle\AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
 /**
  * @ORM\Table(name="superhero")
@@ -51,7 +50,7 @@ class Superhero
     private $catchPhrase;
 
     /**
-     * @ORM\OneToMany(targetEntity="SuperHero\Bundle\AppBundle\Entity\ImageSuperhero", mappedBy="superhero", cascade={"persist","remove", "detach"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="SuperHero\Bundle\AppBundle\Entity\Image", mappedBy="superhero", cascade={"persist","remove", "detach"}, orphanRemoval=true)
      * @Assert\Valid()
      */
     private $images;
@@ -138,27 +137,30 @@ class Superhero
         return $this->catchPhrase;
     }
 
-    public function setImages(Collection $images)
+    public function setImages($images)
     {
-        $this->images = $images;
-
+        if (count($images) > 0) {
+            foreach ($images as $i) {
+                $this->addImage($i);
+            }
+        }
         return $this;
+    }
+
+    public function addImage(Image $image)
+    {
+        $image->setSuperhero($this);
+        $this->images->add($image);
+        return $this;
+    }
+
+    public function removeImage(Image $image)
+    {
+        $this->images->removeElement($image);
     }
 
     public function getImages()
     {
         return $this->images;
-    }
-
-    public function addImageSuperhero(ImageSuperhero $imageSuperhero)
-    {
-        $imageSuperhero->setSuperhero($this);
-        $this->images->add($imageSuperhero);
-        return $this;
-    }
-
-    public function removeFeedAudience(ImageSuperhero $imageSuperhero)
-    {
-        $this->images->removeElement($imageSuperhero);
     }
 }

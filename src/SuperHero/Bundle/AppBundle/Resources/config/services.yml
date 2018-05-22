@@ -2,18 +2,23 @@ services:
     fileuploader.service:
         class: SuperHero\Bundle\AppBundle\Service\FileUploader
         arguments:
-            $targetDirectory: '../../../../../../public/uploads/superhero'
+            $targetDirectory: "%kernel.root_dir%/../public/uploads/superhero"
 
     image.superhero.listener:
-        class: SuperHero\Bundle\AppBundle\EventListener\ImageSuperheroListener
+        class: SuperHero\Bundle\AppBundle\EventListener\ImageListener
         arguments:
             - "@fileuploader.service"
         tags:
-            - { name: doctrine.event_listener, event: postPersist, lazy: true  }
-            - { name: doctrine.event_listener, event: postUpdate, lazy: true  }
-            - { name: doctrine.event_listener, event: preRemove, lazy: true  }
-            - { name: doctrine.event_listener, event: postRemove, lazy: true  }
+            - { name: doctrine.event_listener, event: prePersist, lazy: true  }
+            - { name: doctrine.event_listener, event: preUpdate, lazy: true  }
             - { name: doctrine.event_listener, event: postLoad, lazy: true  }
+
+    superhero.twig.images_count_extension:
+        class: SuperHero\Bundle\AppBundle\Twig\ImagesCountExtension
+        arguments:
+            - "@doctrine"
+        tags:
+            - { name: twig.extension }
 
     # Admin
     sonata.superhero:
@@ -24,11 +29,12 @@ services:
             - null
             - SuperHero\Bundle\AppBundle\Entity\Superhero
             - AppBundle:Admin
+            - "@twig"
     sonata.image.superhero:
-        class: SuperHero\Bundle\AppBundle\Admin\ImageSuperheroAdmin
+        class: SuperHero\Bundle\AppBundle\Admin\ImageAdmin
         tags:
-            - { name: sonata.admin, manager_type: orm, show_in_dashboard: false}
+            - { name: sonata.admin, manager_type: orm, label: Images Superhero, show_in_dashboard: false}
         arguments:
             - null
-            - SuperHero\Bundle\AppBundle\Entity\ImageSuperhero
+            - SuperHero\Bundle\AppBundle\Entity\Image
             - AppBundle:Admin

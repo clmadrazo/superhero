@@ -4,12 +4,12 @@ doctrine:
         connections:
             default:
                 server_version: 5.7
-                driver:   pdo_mysql
-                host:     127.0.0.1
-                port:     8889
-                dbname:   superhero
-                user:     root
-                password: root
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_name%"
+                user:     "%database_user%"
+                password: "%database_password%"
                 charset:  UTF8
 
     orm:

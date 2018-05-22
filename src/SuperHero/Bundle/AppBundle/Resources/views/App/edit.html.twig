@@ -1,0 +1,27 @@
+{% extends 'SonataAdminBundle:CRUD:base_edit.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/jquery.loading/1.2.0/jquery.loading.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block javascripts %}
+
+    {{ parent() }}
+    <script src="//cdn.jsdelivr.net/jquery.loading/1.2.0/jquery.loading.min.js"></script>
+    <script type="text/javascript">
+
+        $(function() {
+
+            $('[data-icon]').each(function (index, obj) {
+                $(obj).parent()
+                      .parent()
+                      .find('.control-label')
+                      .prepend('<img style="height:20px" src="'+  (window.location.href.split('/'))[0] + '//' + (window.location.href.split('/'))[2] + '/images/admin/icons/' + $(obj).data('icon') +'"/>');
+            });
+
+            $('i.separator').hide();
+        });
+    </script>
+
+{% endblock %}
